@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFAudio
 
 struct ContentView: View {
     // firstNumber and secondNumber is used to generate a random number from 1 to 10
@@ -14,6 +15,8 @@ struct ContentView: View {
     @State private var secondNumber = Int.random(in: 1...10)
     @State private var firstNumberEmojis = "" // holds the first number of randomly selected emojis
     @State private var secondNumberEmojis = "" // // holds the second number of randomly selected emojis
+    @State private var userInput = ""
+    @State private var audioPlayer: AVAudioPlayer?
 
     private var emojis = ["🍕", "🍎", "🍏", "🐵", "👽", "🧠", "🧜🏽‍♀️", "🧙🏿‍♂️", "🥷", "🐶", "🐹", "🐣", "🦄", "🐝", "🦉", "🦋", "🦖", "🐙", "🦞", "🐟", "🦔", "🐲", "🌻", "🌍", "🌈", "🍔", "🌮", "🍦", "🍩", "🍪"]
     
@@ -26,6 +29,8 @@ struct ContentView: View {
                 Text("\(secondNumberEmojis)")
             }
             .font(.system(size: 80))
+            .minimumScaleFactor(0.5)
+            .multilineTextAlignment(.center)
             
             Spacer()
             
@@ -34,26 +39,72 @@ struct ContentView: View {
                 Text("+")
                 Text("\(secondNumber)")
             }
+            TextField("", text: $userInput)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 60)
+                .overlay(content: {
+                    RoundedRectangle(cornerRadius: 5)
+                        .stroke(.gray, lineWidth: 2)
+                })
+                .keyboardType(.numberPad)
+                
             .font(.largeTitle)
+            
+            Button("Guess") {
+                let correctAnswer = String(firstNumber + secondNumber)
+                if userInput == correctAnswer {
+                    print("Correct!")
+                    playAudio(fileName: "correct")
+                    firstNumber = Int.random(in: 1...10)
+                    secondNumber = Int.random(in: 1...10)
+                    firstNumberEmojis = String(repeating: emojis.randomElement()!, count: firstNumber)
+                    secondNumberEmojis = String(repeating: emojis.randomElement()!, count: secondNumber)
+                    userInput = ""
+                } else {
+                    print("Wrong")
+                    playAudio(fileName: "wrong")
+                    firstNumber = Int.random(in: 1...10)
+                    secondNumber = Int.random(in: 1...10)
+                    firstNumberEmojis = String(repeating: emojis.randomElement()!, count: firstNumber)
+                    secondNumberEmojis = String(repeating: emojis.randomElement()!, count: secondNumber)
+                    userInput = ""
+                    
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(userInput.isEmpty)
         }
         .padding()
         
         .onAppear {
             // When the screen appears, set the firstNumberEmojis and secondNumberEmojis to the function randomEmojiGenerator passing in the random firstNumber and secondNumber properties.
-            firstNumberEmojis = randomEmojiGenerator(number: firstNumber)
-            secondNumberEmojis = randomEmojiGenerator(number: secondNumber)
+            firstNumberEmojis = String(repeating: emojis.randomElement()!, count: firstNumber)
+            secondNumberEmojis = String(repeating: emojis.randomElement()!, count: secondNumber)
+        }
+    }
+    
+    func playAudio(fileName: String) {
+        guard let soundFile = NSDataAsset(name: fileName) else {
+            return
+        }
+        do {
+            audioPlayer = try AVAudioPlayer(data: soundFile.data)
+            audioPlayer!.prepareToPlay()
+            audioPlayer!.play()
+        } catch {
+            print("Could not find file")
         }
     }
     
     // This function needs to return a string becuase it will be used with firstNumberEmojis and secondNumberEmojis which are strings
-    func randomEmojiGenerator(number: Int) -> String {
-        var emojiString = ""
-        let randomEmoji = emojis.randomElement()!
-        for _ in 1...number {
-            emojiString.append(randomEmoji)
-        }
-        return emojiString
-    }
+//    func randomEmojiGenerator(number: Int) -> String {
+//        var emojiString = ""
+//        let randomEmoji = emojis.randomElement()!
+//        for _ in 1...number {
+//            emojiString.append(randomEmoji)
+//        }
+//        return emojiString // This will be assigned to the firstNumberEmojis and secondNumberEmojis which will then appear on the screen.
+//    }
 }
 
 struct ContentView_Previews: PreviewProvider {
