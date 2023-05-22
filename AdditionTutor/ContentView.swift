@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var firstNumber = 0
-    @State private var secondNumber = 0
+    // firstNumber and secondNumber is used to generate a random number from 1 to 10
+    //  - these numbers will be used to assign a random repeated emoji
+    @State private var firstNumber = Int.random(in: 1...10)
+    @State private var secondNumber = Int.random(in: 1...10)
     @State private var firstNumberEmojis = "" // holds the first number of randomly selected emojis
     @State private var secondNumberEmojis = "" // // holds the second number of randomly selected emojis
 
@@ -35,12 +37,9 @@ struct ContentView: View {
             .font(.largeTitle)
         }
         .padding()
-        // When the app loads, set firstNumber and secondNumber to random ints
+        
         .onAppear {
-            // firstNumber and secondNumber is used to generate a random number from 1 to 10
-            //  - these numbers will be used to assign a random repeated emoji
-            firstNumber = Int.random(in: 1...10)
-            secondNumber = Int.random(in: 1...10)
+            // When the screen appears, set the firstNumberEmojis and secondNumberEmojis to the function randomEmojiGenerator passing in the random firstNumber and secondNumber properties.
             firstNumberEmojis = randomEmojiGenerator(number: firstNumber)
             secondNumberEmojis = randomEmojiGenerator(number: secondNumber)
         }
