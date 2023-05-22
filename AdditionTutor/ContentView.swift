@@ -8,15 +8,27 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @State private var firstNumber = 0
+    @State private var secondNumber = 0
+    private var emojis = ["🍕", "🍎", "🍏", "🐵", "👽", "🧠", "🧜🏽‍♀️", "🧙🏿‍♂️", "🥷", "🐶", "🐹", "🐣", "🦄", "🐝", "🦉", "🦋", "🦖", "🐙", "🦞", "🐟", "🦔", "🐲", "🌻", "🌍", "🌈", "🍔", "🌮", "🍦", "🍩", "🍪"]
+
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            HStack {
+                Text("\(firstNumber)")
+                Text("+")
+                Text("\(secondNumber)")
+            }
+            .font(.largeTitle)
         }
         .padding()
+        // When the app loads, set firstNumber and secondNumber to random ints
+        .onAppear {
+            firstNumber = Int.random(in: 1...10)
+            secondNumber = Int.random(in: 1...10)
+            
+
+        }
     }
 }
 
