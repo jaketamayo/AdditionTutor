@@ -17,18 +17,21 @@ struct ContentView: View {
     @State private var secondNumberEmojis = "" // // holds the second number of randomly selected emojis
     @State private var userInput = ""
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var scoreCount = 0
 
     private var emojis = ["🍕", "🍎", "🍏", "🐵", "👽", "🧠", "🧜🏽‍♀️", "🧙🏿‍♂️", "🥷", "🐶", "🐹", "🐣", "🦄", "🐝", "🦉", "🦋", "🦖", "🐙", "🦞", "🐟", "🦔", "🐲", "🌻", "🌍", "🌈", "🍔", "🌮", "🍦", "🍩", "🍪"]
     
 
     var body: some View {
         VStack {
+            Text("Your current score is: \(scoreCount)")
+                .padding(.bottom)
             Group {
                 Text("\(firstNumberEmojis)")
                 Text("+")
                 Text("\(secondNumberEmojis)")
             }
-            .font(.system(size: 80))
+            .font(.system(size: 60))
             .minimumScaleFactor(0.5)
             .multilineTextAlignment(.center)
             
@@ -39,6 +42,7 @@ struct ContentView: View {
                 Text("+")
                 Text("\(secondNumber)")
             }
+            .font(.title)
             TextField("", text: $userInput)
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 60)
@@ -54,6 +58,7 @@ struct ContentView: View {
                 let correctAnswer = String(firstNumber + secondNumber)
                 if userInput == correctAnswer {
                     print("Correct!")
+                    scoreCount += 1
                     playAudio(fileName: "correct")
                     firstNumber = Int.random(in: 1...10)
                     secondNumber = Int.random(in: 1...10)
